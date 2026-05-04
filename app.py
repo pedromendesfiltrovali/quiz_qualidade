@@ -31,7 +31,7 @@ def salvar_no_motherduck(form_id, setor, historico):
         return False
 
 # Configuração visual do Streamlit
-st.set_page_config(page_title="Dose de Qualidade", page_icon="🛡️")
+st.set_page_config(page_title="Check da Qualidade", page_icon="🛡️")
 
 @st.cache_data
 def load_questions():
@@ -50,7 +50,7 @@ if 'passo' not in st.session_state:
 
 # --- PASSO 1: SETOR ---
 if st.session_state.passo == "setor":
-    st.title("🛡️ Pílula da Qualidade")
+    st.title("🛡️ Check da Qualidade")
     st.subheader("Reforço Mensal de Segurança")
     setor = st.radio("Qual o seu setor?", ["Operação", "Administrativo", "Gestão"], index=None)
     if setor:
