@@ -127,19 +127,20 @@ elif st.session_state.passo == "cpf":
     # Sanitiza: mantém apenas dígitos
     cpf_limpo = re.sub(r"\D", "", cpf_raw)
 
-    # Contador customizado que mostra apenas a quantidade de dígitos
-    st.caption(f"Dígitos digitados: {len(cpf_limpo)} / 11")
+    # Contador customizado — exibe só após começar a digitar
+    if cpf_raw:
+        st.caption(f"Dígitos digitados: {len(cpf_limpo)} / 11")
 
-    if cpf_limpo:
+    # Botão sempre visível — validação acontece no clique, sem Enter intermediário
+    if st.button("Iniciar Quiz 🚀"):
         if len(cpf_limpo) != 11:
             st.warning("O CPF deve ter exatamente 11 dígitos.")
         else:
             st.session_state.cpf = cpf_limpo
-            if st.button("Iniciar Quiz 🚀"):
-                st.session_state.tempo_inicio_quiz = time.time()
-                st.session_state.tempo_inicio_perg = time.time()
-                st.session_state.passo = "quiz"
-                st.rerun()
+            st.session_state.tempo_inicio_quiz = time.time()
+            st.session_state.tempo_inicio_perg = time.time()
+            st.session_state.passo = "quiz"
+            st.rerun()
 
 
 # ─────────────────────────────────────────────
