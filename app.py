@@ -35,7 +35,12 @@ def salvar_no_motherduck(form_id, cpf, setor, historico, tempos, tempo_total, po
         t = tempos    + [0.0] * (10 - len(tempos))
 
         con.execute(
-            """INSERT INTO resultados_quiz VALUES (
+            """INSERT INTO resultados_quiz
+               (timestamp, form_id, cpf, setor,
+                p1,  p2,  p3,  p4,  p5,  p6,  p7,  p8,  p9,  p10,
+                t1,  t2,  t3,  t4,  t5,  t6,  t7,  t8,  t9,  t10,
+                tempo_total, pontuacao)
+            VALUES (
                 ?, ?, ?, ?,
                 ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
                 ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
