@@ -121,18 +121,14 @@ elif st.session_state.passo == "cpf":
     st.title("🛡️ Check da Qualidade")
     st.subheader("Identificação")
 
-    cpf_raw = st.text_input(
-        "Digite o seu CPF",
-        placeholder="Somente números",
-        help="Somente números — pontos e traços são ignorados automaticamente.",
-        max_chars=14   # tolera digitação com pontuação (14 = 11 dígitos + 2 pontos + 1 traço)
-    )
+    st.caption("Somente números. Pontos e traços são ignorados automaticamente.")
+    cpf_raw = st.text_input("Digite o seu CPF", placeholder="Ex: 00000000000")
 
     # Sanitiza: mantém apenas dígitos
     cpf_limpo = re.sub(r"\D", "", cpf_raw)
 
-    if cpf_raw and cpf_limpo != cpf_raw.strip():
-        st.caption("✏️ Caracteres não numéricos foram ignorados.")
+    # Contador customizado que mostra apenas a quantidade de dígitos
+    st.caption(f"Dígitos digitados: {len(cpf_limpo)} / 11")
 
     if cpf_limpo:
         if len(cpf_limpo) != 11:
