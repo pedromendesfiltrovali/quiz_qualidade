@@ -108,7 +108,7 @@ if "passo" not in st.session_state:
 # PASSO 1 — SETOR
 # ─────────────────────────────────────────────
 if st.session_state.passo == "setor":
-    st.title("🛡️ Check da Qualidade")
+    st.image("banner.png", use_container_width=True)
     st.subheader("Reforço Mensal de Segurança")
 
     setor = st.radio("Qual o seu setor?", ["Operação", "Administrativo", "Gestão"], index=None)
