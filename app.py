@@ -80,7 +80,7 @@ def calcular_pontos(acertou: bool, tempo_segundos: float) -> int:
 # ─────────────────────────────────────────────
 # CONFIGURAÇÃO
 # ─────────────────────────────────────────────
-st.set_page_config(page_title="Check da Qualidade", page_icon="🛡️")
+st.set_page_config(page_title="Quiz da Qualidade", page_icon="🛡️")
 
 @st.cache_data
 def load_questions():
@@ -109,7 +109,7 @@ if "passo" not in st.session_state:
 # ─────────────────────────────────────────────
 if st.session_state.passo == "setor":
     st.image("banner.png", use_container_width=True)
-    st.subheader("Reforço Mensal de Segurança")
+    st.subheader("Quiz para aprender, responder e evoluir com a equipe")
 
     setor = st.radio("Qual o seu setor?", ["Operação", "Administrativo", "Gestão"], index=None)
     if setor:
