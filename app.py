@@ -123,7 +123,7 @@ if st.session_state.passo == "setor":
 # PASSO 2 — CPF
 # ─────────────────────────────────────────────
 elif st.session_state.passo == "cpf":
-    st.title("🛡️ Check da Qualidade")
+    st.image("banner.png", use_container_width=True)
     st.subheader("Identificação")
 
     st.caption("Somente números. Pontos e traços são ignorados automaticamente.")
