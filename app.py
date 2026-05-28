@@ -125,18 +125,26 @@ if st.session_state.passo == "setor":
 elif st.session_state.passo == "cpf":
     st.image("banner.png", use_container_width=True)
     st.subheader("Identificação")
-
-    st.caption("Somente números. Pontos e traços são ignorados automaticamente.")
+    st.caption("⚠️ Digite somente números — letras, pontos e traços são ignorados.")
     cpf_raw = st.text_input("Digite o seu CPF", placeholder="Ex: 00000000000")
 
     # Sanitiza: mantém apenas dígitos
     cpf_limpo = re.sub(r"\D", "", cpf_raw)
 
-    # Contador customizado — exibe só após começar a digitar
+    # Feedback em tempo real após começar a digitar
     if cpf_raw:
-        st.caption(f"Dígitos digitados: {len(cpf_limpo)} / 11")
+        tem_nao_numerico = cpf_raw != cpf_limpo
+        if tem_nao_numerico:
+            st.warning("Caracteres não numéricos detectados e ignorados. Somente os números serão considerados.")
+        
+        if len(cpf_limpo) < 11:
+            st.caption(f"Dígitos digitados: {len(cpf_limpo)} / 11")
+        elif len(cpf_limpo) == 11:
+            st.success(f"✅ CPF com 11 dígitos reconhecido.")
+        else:
+            st.error(f"CPF inválido: {len(cpf_limpo)} dígitos digitados. O CPF deve ter exatamente 11.")
 
-    # Botão sempre visível — validação acontece no clique, sem Enter intermediário
+    # Botão sempre visível — validação acontece no clique
     if st.button("Iniciar Quiz 🚀"):
         if len(cpf_limpo) != 11:
             st.warning("O CPF deve ter exatamente 11 dígitos.")
