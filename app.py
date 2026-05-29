@@ -276,17 +276,15 @@ elif st.session_state.passo == "fim":
     st.caption("Você já pode fechar esta aba do navegador.")
 
 
-st.markdown("""
+st.markdown(
+    """
     <style>
-        div[role="radiogroup"] label {
-            padding-top: 8px;
-            padding-bottom: 8px;
-            align-items: center;
-        }
-        /* Oculta o link do GitHub no canto da página */
-        #MainMenu {visibility: hidden;}
-        header {visibility: hidden;}
-        footer {visibility: hidden;}
-        a[href*="github"] {display: none;}
+    .css-1jc7ptx, .e1ewe7hr3, .viewerBadge_container__1QSob,
+    .styles_viewerBadge__1yB5_, .viewerBadge_link__1S137,
+    .viewerBadge_text__1JaDK {
+        display: none;
+    }
     </style>
-""", unsafe_allow_html=True)
+    """,
+    unsafe_allow_html=True
+)
