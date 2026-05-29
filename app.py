@@ -86,8 +86,9 @@ st.set_page_config(page_title="Check da Qualidade", page_icon="🛡️")
 st.markdown("""
     <style>
         div[role="radiogroup"] label {
-            padding: 8px 0px;
-            display: block;
+            padding-top: 8px;
+            padding-bottom: 8px;
+            align-items: center;
         }
     </style>
 """, unsafe_allow_html=True)
