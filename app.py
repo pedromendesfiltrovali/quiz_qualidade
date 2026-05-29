@@ -80,7 +80,17 @@ def calcular_pontos(acertou: bool, tempo_segundos: float) -> int:
 # ─────────────────────────────────────────────
 # CONFIGURAÇÃO
 # ─────────────────────────────────────────────
-st.set_page_config(page_title="Quiz da Qualidade", page_icon="🛡️")
+st.set_page_config(page_title="Check da Qualidade", page_icon="🛡️")
+
+# Espaçamento extra entre as alternativas do radio — melhora toque no celular
+st.markdown("""
+    <style>
+        div[role="radiogroup"] label {
+            padding: 8px 0px;
+            display: block;
+        }
+    </style>
+""", unsafe_allow_html=True)
 
 @st.cache_data
 def load_questions():
@@ -108,8 +118,8 @@ if "passo" not in st.session_state:
 # PASSO 1 — SETOR
 # ─────────────────────────────────────────────
 if st.session_state.passo == "setor":
-    st.image("banner.png", use_container_width=True)
-    st.subheader("Quiz para aprender, responder e evoluir com a equipe")
+    st.title("🛡️ Check da Qualidade")
+    st.subheader("Reforço Mensal de Segurança")
 
     setor = st.radio("Qual o seu setor?", ["Operação", "Administrativo", "Gestão"], index=None)
     if setor:
@@ -123,28 +133,20 @@ if st.session_state.passo == "setor":
 # PASSO 2 — CPF
 # ─────────────────────────────────────────────
 elif st.session_state.passo == "cpf":
-    st.image("banner.png", use_container_width=True)
+    st.title("🛡️ Check da Qualidade")
     st.subheader("Identificação")
-    st.caption("⚠️ Digite somente números — letras, pontos e traços são ignorados.")
+
+    st.caption("Somente números. Pontos e traços são ignorados automaticamente.")
     cpf_raw = st.text_input("Digite o seu CPF", placeholder="Ex: 00000000000")
 
     # Sanitiza: mantém apenas dígitos
     cpf_limpo = re.sub(r"\D", "", cpf_raw)
 
-    # Feedback em tempo real após começar a digitar
+    # Contador customizado — exibe só após começar a digitar
     if cpf_raw:
-        tem_nao_numerico = cpf_raw != cpf_limpo
-        if tem_nao_numerico:
-            st.warning("Caracteres não numéricos detectados e ignorados. Somente os números serão considerados.")
-        
-        if len(cpf_limpo) < 11:
-            st.caption(f"Dígitos digitados: {len(cpf_limpo)} / 11")
-        elif len(cpf_limpo) == 11:
-            st.success(f"✅ CPF com 11 dígitos reconhecido.")
-        else:
-            st.error(f"CPF inválido: {len(cpf_limpo)} dígitos digitados. O CPF deve ter exatamente 11.")
+        st.caption(f"Dígitos digitados: {len(cpf_limpo)} / 11")
 
-    # Botão sempre visível — validação acontece no clique
+    # Botão sempre visível — validação acontece no clique, sem Enter intermediário
     if st.button("Iniciar Quiz 🚀"):
         if len(cpf_limpo) != 11:
             st.warning("O CPF deve ter exatamente 11 dígitos.")
