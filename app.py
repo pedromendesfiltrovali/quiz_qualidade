@@ -274,3 +274,19 @@ elif st.session_state.passo == "fim":
 
     st.info(f"Os dados deste quiz (ID: {df_questions['form_id'].iloc[0]}) foram salvos com sucesso na base de dados da Qualidade.")
     st.caption("Você já pode fechar esta aba do navegador.")
+
+
+st.markdown("""
+    <style>
+        div[role="radiogroup"] label {
+            padding-top: 8px;
+            padding-bottom: 8px;
+            align-items: center;
+        }
+        /* Oculta o link do GitHub no canto da página */
+        #MainMenu {visibility: hidden;}
+        header {visibility: hidden;}
+        footer {visibility: hidden;}
+        a[href*="github"] {display: none;}
+    </style>
+""", unsafe_allow_html=True)
