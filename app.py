@@ -54,7 +54,7 @@ def salvar_no_motherduck(form_id, cpf, setor, historico, tempos, tempo_total, po
         con.close()
         return True
     except Exception as e:
-        st.error(f"Erro ao salvar: {e}")
+        st.session_state.erro_salvamento = str(e)
         return False
 
 
@@ -122,7 +122,7 @@ if st.session_state.passo == "setor":
     st.title("🛡️ Check da Qualidade")
     st.subheader("Reforço Mensal de Segurança")
 
-    setor = st.radio("Qual o seu setor?", ["Operação", "Administrativo", "Comercial", "Marketing", "Gestão de Pessoas","Gestão"], index=None)
+    setor = st.radio("Qual o seu setor?", ["Operação", "Administrativo", "Comercial, "Marketing", "Gestão de Pessoas", "Gestão"], index=None)
     if setor:
         st.session_state.setor = setor
         if st.button("Continuar ➡️"):
@@ -275,5 +275,6 @@ elif st.session_state.passo == "fim":
     if st.session_state.dados_salvos:
         st.info(f"Os dados deste quiz (ID: {df_questions['form_id'].iloc[0]}) foram salvos com sucesso na base de dados da Qualidade.")
     else:
-        st.error("⚠️ Não foi possível salvar os dados. Informe ao administrador.")
+        erro = getattr(st.session_state, "erro_salvamento", "Erro desconhecido.")
+        st.error(f"⚠️ Não foi possível salvar os dados. Detalhe do erro: {erro}")
     st.caption("Você já pode fechar esta aba do navegador.")
