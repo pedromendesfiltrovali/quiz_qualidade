@@ -4,6 +4,8 @@ import duckdb
 import re
 import time
 from datetime import datetime
+import gspread
+from google.oauth2.service_account import Credentials
 
 # ─────────────────────────────────────────────
 # MOTHERDUCK
@@ -57,6 +59,53 @@ def salvar_no_motherduck(form_id, cpf, setor, historico, tempos, tempo_total, po
         st.session_state.erro_salvamento = str(e)
         return False
 
+
+
+# ─────────────────────────────────────────────
+# GOOGLE SHEETS — BACKUP
+# ─────────────────────────────────────────────
+def salvar_no_sheets(form_id, cpf, setor, historico, tempos, tempo_total, pontuacao):
+    try:
+        scopes = [
+            "https://www.googleapis.com/auth/spreadsheets",
+            "https://www.googleapis.com/auth/drive"
+        ]
+        creds = Credentials.from_service_account_info(
+            st.secrets["gcp_service_account"],
+            scopes=scopes
+        )
+        client        = gspread.authorize(creds)
+        spreadsheet_id = st.secrets["sheets"]["spreadsheet_id"]
+        sheet         = client.open_by_key(spreadsheet_id).sheet1
+
+        # Cria cabeçalho se a planilha estiver vazia
+        if sheet.row_count == 0 or sheet.cell(1, 1).value is None:
+            header = [
+                "timestamp", "form_id", "cpf", "setor",
+                "p1",  "p2",  "p3",  "p4",  "p5",
+                "p6",  "p7",  "p8",  "p9",  "p10",
+                "t1",  "t2",  "t3",  "t4",  "t5",
+                "t6",  "t7",  "t8",  "t9",  "t10",
+                "tempo_total", "pontuacao"
+            ]
+            sheet.append_row(header)
+
+        # Garante 10 posições para respostas e tempos
+        h = historico + [""] * (10 - len(historico))
+        t = tempos    + [0.0] * (10 - len(tempos))
+
+        row = [
+            datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+            form_id, cpf, setor,
+            h[0], h[1], h[2], h[3], h[4], h[5], h[6], h[7], h[8], h[9],
+            t[0], t[1], t[2], t[3], t[4], t[5], t[6], t[7], t[8], t[9],
+            tempo_total, pontuacao
+        ]
+        sheet.append_row(row)
+        return True
+    except Exception as e:
+        st.session_state.erro_sheets = str(e)
+        return False
 
 # ─────────────────────────────────────────────
 # PONTUAÇÃO
@@ -122,7 +171,7 @@ if st.session_state.passo == "setor":
     st.title("🛡️ Check da Qualidade")
     st.subheader("Reforço Mensal de Segurança")
 
-    setor = st.radio("Qual o seu setor?", ["Operação", "Administrativo", "Comercial", "Marketing", "Gestão de Pessoas", "Gestão"], index=None)
+    setor = st.radio("Qual o seu setor?", ["Operação", "Administrativo", "Gestão"], index=None)
     if setor:
         st.session_state.setor = setor
         if st.button("Continuar ➡️"):
@@ -212,7 +261,7 @@ elif st.session_state.passo == "quiz":
             else:
                 tempo_total = round(time.time() - st.session_state.tempo_inicio_quiz, 2)
                 if not st.session_state.dados_salvos:
-                    sucesso = salvar_no_motherduck(
+                    args = dict(
                         form_id     = row["form_id"],
                         cpf         = st.session_state.cpf,
                         setor       = st.session_state.setor,
@@ -221,9 +270,13 @@ elif st.session_state.passo == "quiz":
                         tempo_total = tempo_total,
                         pontuacao   = st.session_state.pontuacao
                     )
-                    if sucesso:
-                        st.session_state.dados_salvos   = True
+                    sucesso_md     = salvar_no_motherduck(**args)
+                    sucesso_sheets = salvar_no_sheets(**args)
+                    if sucesso_md or sucesso_sheets:
+                        st.session_state.dados_salvos    = True
                         st.session_state.tempo_total_fim = tempo_total
+                        st.session_state.backup_md       = sucesso_md
+                        st.session_state.backup_sheets   = sucesso_sheets
                 st.session_state.passo = "fim"
                 st.rerun()
 
@@ -273,8 +326,16 @@ elif st.session_state.passo == "fim":
         st.error("🆘 **Atenção necessária.** Seu aproveitamento ficou abaixo do esperado. Recomendamos uma leitura atenta do procedimento interno no Sólides antes da próxima operação.")
 
     if st.session_state.dados_salvos:
-        st.info(f"Os dados deste quiz (ID: {df_questions['form_id'].iloc[0]}) foram salvos com sucesso na base de dados da Qualidade.")
+        md_ok     = getattr(st.session_state, "backup_md",     False)
+        sheets_ok = getattr(st.session_state, "backup_sheets", False)
+        if md_ok and sheets_ok:
+            st.info(f"✅ Dados salvos com sucesso em ambos os destinos (ID: {df_questions['form_id'].iloc[0]}).")
+        elif md_ok:
+            st.info(f"✅ Dados salvos no banco de dados. ⚠️ Backup no Sheets falhou: {getattr(st.session_state, 'erro_sheets', 'erro desconhecido')}.")
+        elif sheets_ok:
+            st.info(f"✅ Dados salvos no backup (Sheets). ⚠️ Banco de dados falhou: {getattr(st.session_state, 'erro_salvamento', 'erro desconhecido')}.")
     else:
-        erro = getattr(st.session_state, "erro_salvamento", "Erro desconhecido.")
-        st.error(f"⚠️ Não foi possível salvar os dados. Detalhe do erro: {erro}")
+        erro_md     = getattr(st.session_state, "erro_salvamento", "erro desconhecido")
+        erro_sheets = getattr(st.session_state, "erro_sheets",     "erro desconhecido")
+        st.error(f"⚠️ Não foi possível salvar os dados em nenhum destino. MotherDuck: {erro_md} | Sheets: {erro_sheets}")
     st.caption("Você já pode fechar esta aba do navegador.")
