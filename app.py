@@ -54,7 +54,7 @@ def salvar_no_motherduck(form_id, cpf, setor, historico, tempos, tempo_total, po
         con.close()
         return True
     except Exception as e:
-        st.error("Erro na conexão com o banco de dados. Informe ao administrador.")
+        st.error(f"Erro ao salvar: {e}")
         return False
 
 
@@ -122,7 +122,7 @@ if st.session_state.passo == "setor":
     st.title("🛡️ Check da Qualidade")
     st.subheader("Reforço Mensal de Segurança")
 
-    setor = st.radio("Qual o seu setor?", ["Operação", "Administrativo", "Marketing", "Comercial", "Gestão"], index=None)
+    setor = st.radio("Qual o seu setor?", ["Operação", "Administrativo", "Gestão"], index=None)
     if setor:
         st.session_state.setor = setor
         if st.button("Continuar ➡️"):
@@ -272,19 +272,8 @@ elif st.session_state.passo == "fim":
     else:
         st.error("🆘 **Atenção necessária.** Seu aproveitamento ficou abaixo do esperado. Recomendamos uma leitura atenta do procedimento interno no Sólides antes da próxima operação.")
 
-    st.info(f"Os dados deste quiz (ID: {df_questions['form_id'].iloc[0]}) foram salvos com sucesso na base de dados da Qualidade.")
+    if st.session_state.dados_salvos:
+        st.info(f"Os dados deste quiz (ID: {df_questions['form_id'].iloc[0]}) foram salvos com sucesso na base de dados da Qualidade.")
+    else:
+        st.error("⚠️ Não foi possível salvar os dados. Informe ao administrador.")
     st.caption("Você já pode fechar esta aba do navegador.")
-
-
-st.markdown(
-    """
-    <style>
-    .css-1jc7ptx, .e1ewe7hr3, .viewerBadge_container__1QSob,
-    .styles_viewerBadge__1yB5_, .viewerBadge_link__1S137,
-    .viewerBadge_text__1JaDK {
-        display: none;
-    }
-    </style>
-    """,
-    unsafe_allow_html=True
-)
