@@ -122,7 +122,7 @@ if st.session_state.passo == "setor":
     st.title("🛡️ Check da Qualidade")
     st.subheader("Reforço Mensal de Segurança")
 
-    setor = st.radio("Qual o seu setor?", ["Operação", "Administrativo", "Gestão"], index=None)
+    setor = st.radio("Qual o seu setor?", ["Operação", "Administrativo", "Comercial", "Marketing", "Gestão de Pessoas","Gestão"], index=None)
     if setor:
         st.session_state.setor = setor
         if st.button("Continuar ➡️"):
